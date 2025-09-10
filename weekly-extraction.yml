@@ -28,7 +28,7 @@ jobs:
         pip install -r requirements.txt
     
     - name: Run Service Fusion extraction
-      run: python service_fusion_extraction.py
+      run: python project_dashboard_ytd.py
       env:
         SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
         SF_CLIENT_SECRET: ${{ secrets.SF_CLIENT_SECRET }}
