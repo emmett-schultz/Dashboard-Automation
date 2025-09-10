@@ -508,9 +508,62 @@ def main():
         api_token = os.getenv('KIMAI_API_TOKEN')
         base_url = os.getenv('KIMAI_BASE_URL', 'https://time.mybwt.net')
         
+        # Debug authentication
+        print(f"=== DEBUG AUTHENTICATION ===")
+        print(f"API Token: {api_token}")
+        print(f"Base URL: {base_url}")
+        print(f"API Token exists: {'KIMAI_API_TOKEN' in os.environ}")
+        print(f"Base URL exists: {'KIMAI_BASE_URL' in os.environ}")
+        
         if not api_token:
             logger.error("Missing KIMAI_API_TOKEN environment variable")
             sys.exit(1)
+        
+        # Test simple API call before proceeding
+        test_headers = {
+            "X-AUTH-USER": "API",
+            "X-AUTH-TOKEN": api_token,
+            "X-AUTH-PERMISSION": "view_user, view_other_timesheet, full"
+        }
+        
+        test_url = f"{base_url}/api/users"
+        print(f"Testing URL: {test_url}")
+        print(f"Test headers: {test_headers}")
+        
+        try:
+            response = requests.get(test_url, headers=test_headers, timeout=10)
+            print(f"Response status: {response.status_code}")
+            print(f"Response headers: {dict(response.headers)}")
+            
+            if response.status_code != 200:
+                print(f"Response text: {response.text[:500]}")
+                
+                # Try alternative authentication methods
+                print("=== TRYING ALTERNATIVE AUTH ===")
+                
+                # Method 1: Different header format
+                alt_headers_1 = {
+                    "Authorization": f"Bearer {api_token}",
+                    "Content-Type": "application/json"
+                }
+                alt_response_1 = requests.get(test_url, headers=alt_headers_1, timeout=10)
+                print(f"Alt Method 1 (Bearer): {alt_response_1.status_code}")
+                
+                # Method 2: Basic auth
+                alt_headers_2 = {
+                    "X-AUTH-TOKEN": api_token,
+                    "Content-Type": "application/json"
+                }
+                alt_response_2 = requests.get(test_url, headers=alt_headers_2, timeout=10)
+                print(f"Alt Method 2 (Token only): {alt_response_2.status_code}")
+                
+            else:
+                print("Authentication test successful!")
+                
+        except Exception as e:
+            print(f"Test request failed: {str(e)}")
+        
+        print("=== END DEBUG ===")
         
         logger.info(f"Starting Kimai YTD extraction from {base_url}")
         
