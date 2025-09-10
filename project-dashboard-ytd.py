@@ -422,6 +422,13 @@ class ServiceFusionExtractor:
 def main():
     """Main execution function"""
     try:
+        # Debug: Print environment info
+        print(f"Python version: {sys.version}")
+        print(f"Current working directory: {os.getcwd()}")
+        print("Environment variables:")
+        print(f"SF_CLIENT_ID exists: {'SF_CLIENT_ID' in os.environ}")
+        print(f"SF_CLIENT_SECRET exists: {'SF_CLIENT_SECRET' in os.environ}")
+        
         # Get credentials from environment
         client_id = os.getenv('SF_CLIENT_ID')
         client_secret = os.getenv('SF_CLIENT_SECRET')
